@@ -71,19 +71,41 @@ parallelplot(cc2010.clean[,-c(1,2)], col = cc2010.clean$BASIC2010,
 
 7. _Find Montana State in the data set and highlight its observation in one of your PCP plots, making plots of the ranked and the original version of the data set. I like to create color and line width id vectors to pass to col and lwd to enhance the plot with other information when I want to change the color or line width for just an observation or two but you are welcome to tackle this in other ways (matplot allows a second plot to be added using add=T in the second plot call). Keep the basic three color groups and try to make MSU identifiable. Characterize MSU relative to the other institutions on these variables._
 
+```{r p7_a, echo=F, comment=NA, message=F, warning=F, out.width="\\linewidth", out.height="0.3\\linewidth", fig.width=12, fig.height=4}
+
+```
 
 ## R Code Appendix:
 Problem 1:
+```{r a1, ref.label='p1_a', eval=F}
+```
+
+Problem 2:
+```{r a2, ref.label='p2_a', eval=F}
+```
 
 Problem 3:
+```{r a3, ref.label='p3_a', eval=F}
+```
 
 Problem 4:
+```{r a4, ref.label='p4_a', eval=F}
+```
 
 Problem 5:
+```{r a5, ref.label='p5_a', eval=F}
+```
+
+```{r a5b, ref.label='p5_b', eval=F}
+```
 
 Problem 6:
+```{r a6, ref.label='p6_a', eval=F}
+```
 
 Problem 7:
+```{r a7, ref.label='p7_a', eval=F}
+```
 
 
 ### About This Markdown File
