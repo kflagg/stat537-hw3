@@ -50,6 +50,27 @@ tableplot(cc2010.clean[-1], sortCol = 2, nBins = 297)
 ```
 
 5. _Make two parallel coordinate plots, one using matplot and one using parallelplot from lattice. In each, color the lines based on the BASIC2010 variable. I like to leave the coloring categorical variable in PCP plots which often alleviates the need to add a legend especially with an ordered categorical variable (if you know what direction it went). Make sure in each that I can read all the variable names in the versions you submit._
+```{r p5_a, echo=F, comment=NA, message=F, warning=F, out.width="\\linewidth", out.height="0.3\\linewidth", fig.width=12, fig.height=4}
+scale01 <- function(vec){
+  vec1 <- vec[!is.na(vec)]
+  (vec-min(vec1))/(max(vec1) - min(vec1))
+}
+
+cc.scaled <- sapply(cc2010.clean[,-c(1,2)], scale01)
+matplot(t(cc.scaled), ylab = "Scaled Responses", xaxt="n", type="l", col=cc2010.clean$BASIC2010, 
+        lty = as.numeric(cc2010.clean$BASIC2010), lwd=2)
+tics <- 1:15
+xlabs <- names(cc2010.clean[,-c(1,2)])
+tck <- axis(1, at=tics, labels=FALSE)
+text(tck, par("usr")[3], labels=xlabs, srt=315, xpd=TRUE, adj=c(-0.2,1.2, cex=0.9))
+```
+
+```{r p5_b, echo=F, comment=NA, message=F, warning=F, out.width="\\linewidth", out.height="0.3\\linewidth", fig.width=12, fig.height=4}
+require(lattice)
+parallelplot(cc2010.clean[,-c(1,2)], col = cc2010.clean$BASIC2010, 
+             lty = as.numeric(cc2010.clean$BASIC2010), horizontal=FALSE, lwd=2)
+```
+
 
 6. _The actual Carnegie rankings are based on initially ranking each quantitative variable to spread out the differences at small values and decrease the impacts of outliers. Use the rank function to generate a new data set that replaces the ranks on each of the quantitative variables. Remake your favorite PCP plot and discuss how different the classifications look in this plot._
 
