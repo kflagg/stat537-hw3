@@ -42,6 +42,12 @@ tableplot(cc2010Ps[-1], sortCol = 1, nBins = 297)
 ```
 
 4. _Before proceeding further, clean out any universities that have any missing values in this data set. Remake a tableplot that is sorted based on one of the quantitative variables._
+```{r p4_a, echo=F, comment=NA, message=F, warning=F, out.width="\\linewidth", out.height="0.3\\linewidth", fig.width=12, fig.height=4}
+cc2010.clean <- na.omit(cc2010Ps)
+
+# Name is first column, BASIC2010 is first of remaining columns
+tableplot(cc2010.clean[-1], sortCol = 2, nBins = 297)
+```
 
 5. _Make two parallel coordinate plots, one using matplot and one using parallelplot from lattice. In each, color the lines based on the BASIC2010 variable. I like to leave the coloring categorical variable in PCP plots which often alleviates the need to add a legend especially with an ordered categorical variable (if you know what direction it went). Make sure in each that I can read all the variable names in the versions you submit._
 
