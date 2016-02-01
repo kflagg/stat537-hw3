@@ -19,7 +19,7 @@ cc2010_PhD$BASIC2010 <- factor(cc2010_PhD$BASIC2010)
 cc2010Ps <- cc2010_PhD[,c("NAME", "BASIC2010", "FACFTTOT", "HUM_D", "PROF_D", "SOC_D", "STEM_D", "RESSTAFF", "STEM_EXP")]
 
 cc2010.md <- md.pattern(cc2010Ps)
-pander(cc2010.md)
+pander(cc2010.md, split.table = Inf)
 ```
 
 2. _Make a tableplot of the data set cc2010Ps except the university names. It should be sorted based on the classification codes that Carnegie created. Describe the differences in the responses based on the tableplot results._
