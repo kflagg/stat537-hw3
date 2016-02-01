@@ -6,7 +6,7 @@ output: html_document
 ---
 
 1. _Summarize the missing data patterns. How many of each kind are present? Ignoring the name of the institutions, how many totals cells are missing out of the N=297 by Q=8 matrix of information?_
-```{r p1_a, echo=F, comment="", message=F, warning=F}
+```{r p1_a, echo=F, comment=NA, message=F, warning=F}
 require(pander)
 require(mice)
 
@@ -47,6 +47,10 @@ tableplot(cc2010.clean[-1], sortCol = 6, nBins = 297)
 5. _Make two parallel coordinate plots, one using matplot and one using parallelplot from lattice. In each, color the lines based on the BASIC2010 variable. I like to leave the coloring categorical variable in PCP plots which often alleviates the need to add a legend especially with an ordered categorical variable (if you know what direction it went). Make sure in each that I can read all the variable names in the versions you submit._
 
 6. _The actual Carnegie rankings are based on initially ranking each quantitative variable to spread out the differences at small values and decrease the impacts of outliers. Use the rank function to generate a new data set that replaces the ranks on each of the quantitative variables. Remake your favorite PCP plot and discuss how different the classifications look in this plot._
+```{r p6_a, echo=F, comment=NA, message=F, warning=F}
+cc2010.ranks <- cc2010.clean
+cc2010.ranks[,-1] <- apply(cc2010.ranks[,-1], 2, rank)
+```
 
 7. _Find Montana State in the data set and highlight its observation in one of your PCP plots, making plots of the ranked and the original version of the data set. I like to create color and line width id vectors to pass to col and lwd to enhance the plot with other information when I want to change the color or line width for just an observation or two but you are welcome to tackle this in other ways (matplot allows a second plot to be added using add=T in the second plot call). Keep the basic three color groups and try to make MSU identifiable. Characterize MSU relative to the other institutions on these variables._
 
