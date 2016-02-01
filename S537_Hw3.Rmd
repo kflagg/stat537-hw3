@@ -6,7 +6,7 @@ output: html_document
 ---
 
 1. _Summarize the missing data patterns. How many of each kind are present? Ignoring the name of the institutions, how many totals cells are missing out of the N=297 by Q=8 matrix of information?_
-```{r p1_a, echo=F, comment="", message=F, warning=F}
+```{r p1_a, echo=F, comment=NA, message=F, warning=F}
 require(pander)
 require(mice)
 
@@ -52,22 +52,27 @@ scale01 <- function(vec){
 }
 
 cc.scaled <- sapply(cc2010.clean[,-c(1,2)], scale01)
-matplot(t(cc.scaled), ylab = "Scaled Responses", xaxt="n", type="l", col=cc2010.clean$BASIC2010, 
+colors <- ifelse(cc2010.clean$BASIC2010==15, "#00000040", ifelse(cc2010.clean$BASIC2010==16, "#ff000040", "#00ff0040"))
+matplot(t(cc.scaled), ylab = "Scaled Responses", xaxt="n", type="l", col=colors, 
         lty = as.numeric(cc2010.clean$BASIC2010), lwd=2)
 tics <- 1:15
 xlabs <- names(cc2010.clean[,-c(1,2)])
 tck <- axis(1, at=tics, labels=FALSE)
 text(tck, par("usr")[3], labels=xlabs, srt=315, xpd=TRUE, adj=c(-0.2,1.2, cex=0.9))
 ```
-
 ```{r p5_b, echo=F, comment=NA, message=F, warning=F, out.width="\\linewidth", out.height="0.3\\linewidth", fig.width=12, fig.height=4}
 require(lattice)
-parallelplot(cc2010.clean[,-c(1,2)], col = cc2010.clean$BASIC2010, 
+parallelplot(cc2010.clean[,-c(1,2)], col = colors, 
              lty = as.numeric(cc2010.clean$BASIC2010), horizontal=FALSE, lwd=2)
 ```
 
-
 6. _The actual Carnegie rankings are based on initially ranking each quantitative variable to spread out the differences at small values and decrease the impacts of outliers. Use the rank function to generate a new data set that replaces the ranks on each of the quantitative variables. Remake your favorite PCP plot and discuss how different the classifications look in this plot._
+```{r p6_a, echo=F, comment=NA, message=F, warning=F, out.width="\\linewidth", out.height="0.3\\linewidth", fig.width=12, fig.height=4}
+cc2010.ranks <- cc2010.clean
+
+# Rank each column except the first two (name and class)
+cc2010.ranks[,-(1:2)] <- apply(cc2010.ranks[,-(1:2)], 2, rank)
+```
 
 7. _Find Montana State in the data set and highlight its observation in one of your PCP plots, making plots of the ranked and the original version of the data set. I like to create color and line width id vectors to pass to col and lwd to enhance the plot with other information when I want to change the color or line width for just an observation or two but you are welcome to tackle this in other ways (matplot allows a second plot to be added using add=T in the second plot call). Keep the basic three color groups and try to make MSU identifiable. Characterize MSU relative to the other institutions on these variables._
 
