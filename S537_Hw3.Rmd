@@ -1,0 +1,136 @@
+---
+title: "Stat 537: Homework 2"
+author: "Doug Anderson and Brandon Fenton"
+date: "Due Wednesday, Jan 27 at end of day"
+output: html_document
+---
+
+1. _Use the dredge function from the R package MuMIn on your "full" model (say something like fm1) to generate AICs for all possible models._
+
+We have opted to use the __golf__ data set in the __Rlab__ package. Our "full" model consists of __score__ (of a PGA golfer from a round of 18 holes) as the response and the average __distance__ of drives from two holes in opposing directions, the __accur__ (accuracy) of the drives (percentage of times that drives were in the fairway for par 4 and par 5 holes), and the average number of __putts__ in the round for holes where the green was hit in regulation as explanatory variables.
+
+```{r p1_a, echo=F, comment="", message=F, warning=F}
+require(Rlab)
+data(golf)
+require(MuMIn)
+options(na.action = "na.fail")
+
+full.lm <- lm(score ~ distance + accur + putts, data = golf)
+models <- dredge(full.lm, rank=AIC)
+models
+```
+
+2. _For AICs, we usually scale the models using Delta-AIC as a difference in distance from the true model as compared to the top AIC model. Differences of more than 2 units are considered to be "large" and strong support for a model that is 2 units closer to the truth. This is reported in the delta column in the dredge output. Use these ideas to discuss support for your top model versus others. Do not use the word "significant" in your discussion._
+
+In comparing all possible models - with this subset of explanatory variables (distance, accuracy, and putts) and with score as the response - with the use of Delta-AIC output, it was determined that the model containing all three predictors was the model closest to the "truth". A difference in Delta-AIC of 2 units is considered a large difference, meaning a model that has a Delta-AIC of more than 2 is a departure from the true model. Applying the __dredge()__ function on our model has resulted in Delta-AICs (compared to the top model containing all three predictors) exceeding 55. This is strong evidence in support of our top model being closer to the truth - if not actually the true model - as compared to the other models.
+
+3. _Also compare support for the model with no predictors to your top model (if it isn't your top model) on AICs. In the model summary() for your top model, there is a result that parallels this comparison. Report that result and discuss whether they lead you to the same suggestions about these two models._
+
+The Delta-AIC between the top model (full model with all predictors) and the null model (no predictors) is 208.88. This difference is more than 100 times greater in magnitude than the - generally large - difference of 2, providing very strong evidence in favor of the full model over the null model. 
+
+```{r p3_a, echo=F, comment="", message=F, warning=F}
+full.sum <- summary(get.models(models,1)[[1]])
+library(pander)
+panderOptions("digits", 7)
+# pander(full.sum$coef)
+full.sum
+```
+
+In parallel, the F-test in the model summary is comparing the null model with no predictors ($H_0: y_{i} = \beta_0 + \epsilon_{i}$) to the full model with all predictors ($H_1: y_{i} = \beta_0 + \beta_1 \cdot x_{i1} + \beta_2 \cdot x_{i2} + \beta_3 \cdot x_{i3} + \epsilon_{i}$).  In this case the associated p-value is extremely small (p-value $\ll 0.001$) implying that the full model is superior, or closer to the truth.  
+
+4. _Now we will switch to using cross-validation for these same sorts of comparisons. Read JWHT page 175 to 181. Write R code to calculate the LOOCV error for a model with a common mean for all observations (so the model is lm(y~1,data=?)). Do not use any functions that directly calculate the LOOCV (see below). Report the R code and your estimate of CV$_{(n)}$ for this model._ 
+```{r p4_a, echo=T, comment="", message=F, warning=F}
+n <- dim(golf)[1] # sample size
+CVn_j <- apply(as.matrix(1:n), 1, function(x) (golf$score[x] - mean(golf$score[-x]))^2)
+mean.CVn_j <- mean(CVn_j) #0.6813177
+```
+
+Using the above code, it was estimated that the LOOCV error for a model with a common mean for all observations is $\text{CV}_{(n)} =$ `r mean.CVn_j`. 
+
+5. _Based on JWHT result 5.2, you can also use the diagonal from the hat matrix to do LOOCV or you can mimic what you might have done in the previous questions that involved deleting each observation and producing the required fitted value. The $h_{ii}$'s are available in R using influence(fm1)$hat. Now write and report your own code to find the LOOCV for your top ranked, second ranked, and worst ranked models from the AIC model selection. Discuss these comparisons (note: these are on the squared units of your response variable and there are no rules of thumb for differences). Also note whether they generally agree with the AIC results or not._
+
+```{r p5_a, echo=T, comment="", message=F, warning=F}
+require(cvTools)
+second.lm <- get.models(models,2)[[1]]
+null.lm <- get.models(models,8)[[1]]
+
+# get the diagonals from the hat matrix for each model
+hii.full <- influence(full.lm)$hat
+hii.second <- influence(second.lm)$hat
+hii.null <- influence(null.lm)$hat
+
+# estimate LOOCV for each model
+CVN_j.full <- ((golf$score-predict(full.lm))/(1-hii.full))^2
+CVN_j.second <- ((golf$score-predict(second.lm))/(1-hii.second))^2
+CVN_j.null <- ((golf$score-mean(golf$score))/(1-hii.null))^2
+
+LOOCV.full <- mean(CVN_j.full)
+LOOCV.second <- mean(CVN_j.second)
+LOOCV.null <- mean(CVN_j.null)
+
+# Check
+LOOfolds <- cvFolds(n=n, K=n, R=1)
+check.L.full <- cvLm(full.lm, cost=mspe, folds=LOOfolds)
+check.L.second <- cvLm(second.lm, cost=mspe, folds=LOOfolds)
+check.L.null <- cvLm(null.lm, cost=mspe, folds=LOOfolds)
+```
+
+```{r p5_b, echo=F, comment="", message=F, warning=F}
+LOOCV.sum.df <- data.frame("Est_LOOCV" = c(LOOCV.full, LOOCV.second, LOOCV.null), 
+                           "cvLM_LOOCV" = c(check.L.full$cv, check.L.second$cv, 
+                                            check.L.null$cv), 
+                           row.names=c("Top Ranked (Full)", "Second Ranked", 
+                                       "Worst Ranked (Null)"))
+pander(LOOCV.sum.df)
+```
+
+The lowest $\text{CV}_{(n)}$ value is for the top-ranked model, followed by the second-ranked model and then the worst-ranked model.  Lower values result from less prediction error; perfect prediction would result in a MSPE of 0.  In this case, on average the full model (which is also the top-ranked model determined by AIC) makes more accurate predictions than the other two.  The ordering of the MSPE results aligns with that produced by the AIC results.  Each of the MSPE values agrees with the corresponding value produced by __cvLm__ (this was done to check our work).
+
+6. _Read JWHT 5.1.3. Now we can consider k-fold cross-validation for these same comparisons. Use 5-fold cross-validation to estimate the mean-squared prediction error for your top model. Modify the cvFolds object to get 5-fold CV. Compare this result to the estimate from LOOCV._
+
+```{r p6_a, echo=F, comment="", message=F, warning=F}
+set.seed(777)
+k5folds <- cvFolds(n=n, K=5, R=1)
+cvLm(full.lm, cost=mspe, folds=k5folds)
+```
+The estimated error for 5-fold cross-validation (with this seed) is close to the estimated error for LOOCV. In fact, it is slightly smaller, though this will not always be the case depending on the value used to seed the pseudo-random number generator used to select the folds.  This is fortunate, as 5-fold cross-validation is far less computationally intensive in general (JWHT Result 5.2 only holds for least squares linear or polynomial regression).
+
+7. _Now, change the seed and re-run all the lines of code from 6 for one of the models. What is 5-fold CV and why does this estimated error change? Why does LOOCV not change if you change the seed?_
+
+```{r p7_a, echo=F, comment="", message=F, warning=F}
+set.seed(pi)
+k5folds <- cvFolds(n=n, K=5, R=1)
+cvLm(full.lm, cost=mspe, folds=k5folds)
+
+LOOfolds <- cvFolds(n=n, K=n, R=1)
+cvLm(full.lm, cost=mspe, folds=LOOfolds)
+```
+The elements in the 5 folds are selected randomly, and so will be different with different seed values.  In contrast with the results from the 5-fold validation performed in #6, the MSPE value produced using the new seed value is slightly larger than that for LOOCV.  The LOOCV MSPE remains unchanged because with LOOCV each observation is used once as a test set for a model fit with all of the remaining observations; so regardless of order the set of training/test set splits used will be identical, making the results the same no matter what value has been used to seed the pseudo-random number generator.
+
+## R Code Appendix:
+Problem 1:
+```{r a1, ref.label='p1_a', eval=F}
+```
+
+Problem 3:
+```{r a3, ref.label='p3_a', eval=F}
+```
+
+Problem 4:
+```{r a4, ref.label='p4_a', eval=F}
+```
+
+Problem 5:
+```{r a5, ref.label='p5_a', eval=F}
+```
+
+```{r a6, ref.label='p5_b', eval=F}
+```
+
+Problem 6:
+```{r a7, ref.label='p6_a', eval=F}
+```
+
+Problem 7:
+```{r a8, ref.label='p7_a', eval=F}
+```
