@@ -13,16 +13,25 @@ There are 248 institutions with no missing cells. 48 institutions are missing th
 require(pander)
 require(mice)
 
-cc2010 <- read.csv("https://montana.box.com/shared/static/hlv178y436vggzmsxxzsdkoarfkopkvp.csv", header = TRUE)
-cc2010_PhD <- cc2010[(cc2010$BASIC2010>14 & cc2010$BASIC2010 < 18),]
-cc2010_PhD$BASIC2010 <- factor(cc2010_PhD$BASIC2010)
-cc2010Ps <- cc2010_PhD[,c("NAME", "BASIC2010", "FACFTTOT", "HUM_D", "PROF_D", "SOC_D", "STEM_D", "RESSTAFF", "STEM_EXP")]
+#cc2010 <- read.csv("https://montana.box.com/shared/static/hlv178y436vggzmsxxzsdkoarfkopkvp.csv", header = TRUE)
+#cc2010_PhD <- cc2010[(cc2010$BASIC2010>14 & cc2010$BASIC2010 < 18),]
+#cc2010_PhD$BASIC2010 <- factor(cc2010_PhD$BASIC2010)
+#cc2010Ps <- cc2010_PhD[,c("NAME", "BASIC2010", "FACFTTOT", "HUM_D", "PROF_D", "SOC_D", "STEM_D", "RESSTAFF", "STEM_EXP")]
+#save(cc2010Ps, file = "cc2010Ps.RData")
+load("cc2010Ps.RData")
 
 cc2010.md <- md.pattern(cc2010Ps)
 pander(cc2010.md, split.table = Inf)
 ```
 
 2. _Make a tableplot of the data set cc2010Ps except the university names. It should be sorted based on the classification codes that Carnegie created. Describe the differences in the responses based on the tableplot results._
+
+```{r p2_a, echo=F, comment=NA, message=F, warning=F, out.width="\\linewidth", out.height="0.3\\linewidth", fig.width=12, fig.height=4}
+require(tabplot)
+
+# Name is first column, BASIC2010 is first of remaining columns
+tableplot(cc2010Ps[-1], sortCol = 1, nBins = 99)
+```
 
 3. _Now consider re-sorting the observations based on other variables. You can use itableplot() or just re-sort manually using the sortCol= in the function call. For example, try sortCol=2 to sort based on total number of faculty. What does this show you about the missing observations? Does this support a MCAR assumption? Just use the plot to provide a short discussion._
 
