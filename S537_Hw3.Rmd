@@ -7,8 +7,6 @@ output: html_document
 
 1. _Summarize the missing data patterns. How many of each kind are present? Ignoring the name of the institutions, how many totals cells are missing out of the N=297 by Q=8 matrix of information?_
 
-There are 248 institutions with no missing cells. 48 institutions are missing the number of full-time faculty, number of non-faculty research staff, and amount of STEM research expense. One institution is missing all variables except for the 2010 Basic Classification. In total, 151 of the 2376 cells are missing.
-
 ```{r p1_a, echo=F, comment="", message=F, warning=F}
 require(pander)
 require(mice)
@@ -24,16 +22,24 @@ cc2010.md <- md.pattern(cc2010Ps)
 pander(cc2010.md, split.table = Inf)
 ```
 
+There are 248 institutions with no missing cells. 48 institutions are missing the number of full-time faculty, number of non-faculty research staff, and amount of STEM research expense. One institution is missing all variables except for the 2010 Basic Classification. In total, 151 of the 2376 cells are missing.
+
 2. _Make a tableplot of the data set cc2010Ps except the university names. It should be sorted based on the classification codes that Carnegie created. Describe the differences in the responses based on the tableplot results._
 
 ```{r p2_a, echo=F, comment=NA, message=F, warning=F, out.width="\\linewidth", out.height="0.3\\linewidth", fig.width=12, fig.height=4}
 require(tabplot)
 
 # Name is first column, BASIC2010 is first of remaining columns
-tableplot(cc2010Ps[-1], sortCol = 1, nBins = 99)
+tableplot(cc2010Ps[-1], sortCol = 1, nBins = 297)
 ```
 
+Institutions with classification 15 tend to have higher numbers of faculty members and research staff, award more doctoral degrees, and spend more on STEM research than institutions with classifications 16 and 17. All of the institutions with missing responses have classification 17.
+
 3. _Now consider re-sorting the observations based on other variables. You can use itableplot() or just re-sort manually using the sortCol= in the function call. For example, try sortCol=2 to sort based on total number of faculty. What does this show you about the missing observations? Does this support a MCAR assumption? Just use the plot to provide a short discussion._
+
+```{r p3_a, echo=F, comment=NA, message=F, warning=F, out.width="\\linewidth", out.height="0.3\\linewidth", fig.width=12, fig.height=4}
+tableplot(cc2010Ps[-1], sortCol = 1, nBins = 297)
+```
 
 4. _Before proceeding further, clean out any universities that have any missing values in this data set. Remake a tableplot that is sorted based on one of the quantitative variables._
 
