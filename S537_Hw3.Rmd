@@ -92,6 +92,7 @@ parallelplot(msu.ranks[,-c(1,2)], col = colors,
              lwd = 2+as.numeric(msu.ranks$NAME=="Montana State University"), 
              lty = as.numeric(msu.ranks$BASIC2010), horizontal=FALSE)
 ```
+In terms of the number of research staff and STEM research expenditure, Montana State lies in a region of overlap between category 15 institutions and category 16 institutions. However, MSU has a much lower number of faculty than most category 15 institutions and has no research doctorates in the humanities and social sciences. In the plot on the original scale, it is seen that several category 15 institutions also have 0 humanities research doctorates, but they have much larger numbers of faculty and professional research doctorates than does MSU.
 
 ## R Code Appendix:
 Problem 1:
