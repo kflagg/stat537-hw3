@@ -52,7 +52,7 @@ scale01 <- function(vec){
 }
 
 cc.scaled <- sapply(cc2010.clean[,-c(1,2)], scale01)
-colors <- ifelse(cc2010.clean$BASIC2010==15, "#00000040", ifelse(cc2010.clean$BASIC2010==16, "#ff000040", "#00ff0040"))
+colors <- ifelse(cc2010.clean$BASIC2010==15, "#00000040", ifelse(cc2010.clean$BASIC2010==16, "#ff000040", "#0000ff40"))
 matplot(t(cc.scaled), ylab = "Scaled Responses", xaxt="n", type="l", col=colors, 
         lty = as.numeric(cc2010.clean$BASIC2010), lwd=2)
 tics <- 1:15
@@ -72,6 +72,9 @@ cc2010.ranks <- cc2010.clean
 
 # Rank each column except the first two (name and class)
 cc2010.ranks[,-(1:2)] <- apply(cc2010.ranks[,-(1:2)], 2, rank)
+parallelplot(cc2010.ranks[,-c(1,2)], col = colors, 
+             lty = as.numeric(cc2010.clean$BASIC2010), horizontal=FALSE, lwd=2)
+
 ```
 In this plot we are seeing the ordering of the variables without taking into account their magnitude.  This method confers a number of advantages.  As stated in the question this will increase small differences and decrease large differences, and this makes certain relationships between the observations in each category more apparent.  The rank-based plot shows that there is relatively little overlap between the schools in categories 15 and 16 with respect to all variables except for __HUM\_D__ and __PROF\_D__; it is also far more apparent in this plot that many schools award no humanities or professional doctorates.  The rank-based plot also makes more efficient use of the available vertical space, resulting in, for example, a much clearer picture of where the rankings for category 17 schools lie.  However, there might be cases in which the magnitude of a particular value would be relevant, so either form of plot could be appropriate depending on the circumstances.
 
